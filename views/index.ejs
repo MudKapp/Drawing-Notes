@@ -1,0 +1,22 @@
+<%- include('partials/header') -%>
+
+    <div class="row">
+
+    
+    <% for (const note of notes) { %>
+        <div class="col-sm-6">
+            <figure class="figure">
+                <a href="/notes/<%= note._id%>">
+                    <img class="figure-img img-fluid rounded" src="<%=note.image%>" alt="note image">
+                </a>
+                <figcaption class="figure-caption">
+                    <%= note.title %>
+                </figcaption>
+            </figure>
+        </div>
+    <% } %>
+    </div>
+    <hr>
+    <button class="d-block btn btn-primary px-3 float-right"><a class="text-white" href="/notes/create">Create Note</a></button>
+<%- include('partials/footer') %> 
+    

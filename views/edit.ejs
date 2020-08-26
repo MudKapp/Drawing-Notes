@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<form method="post" enctype="multipart/form-data">
+<div class="form-group">
+    <label for="title">Title:</label>
+    <input class="form-control" type="text" name="title" id="title" value="<%= note.title %>">
+</div>
+<div class="form-group">
+    <label for="image">Image:</label>
+    <input class="form-control-file" type="file" name="image" id="image" >
+</div>
+<div class="form-group">
+    <label for="notes">Notes:</label>
+    <textarea class="form-control" name="notes" id="notes" cols="30" rows="10"><%= note.notes %></textarea>
+</div>
+<button class="btn btn-primary px-3">Edit Note</button>
+</form>
+
+<script>
+    form = document.querySelector('form')
+    data = new FormData(form)
+    button = document.querySelector('button')
+    button.addEventListener('click',(e)=>{
+        e.preventDefault();
+        fetch('/notes/<%=note._id%>',
+        {
+            method: 'PUT',
+            body: data
+        })
+        .then(res=>res.json())
+        .then(json=>window.location.href = json.redirect)
+        .catch(err=>console.log(err))
+    })
+</script>
+<%- include('partials/footer') %> 

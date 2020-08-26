@@ -1,0 +1,44 @@
+<%- include('partials/header') %>
+<div>
+    <h3><%= note.title %> </h3>
+    <img class="img-fluid rounded " src="<%=note.image%>" alt="note image">
+    <p><%= note.notes %></p>
+    <button class="btn btn-danger px-3 mr-3" onclick="deleteNote(this)">Delete Note</button>
+    <button class="btn btn-warning px-3" onclick="window.location.href='/notes/<%= note._id %>/edit'" >Edit Note</button>
+</div>
+
+<!-- Comments -->
+<div>
+    <% if(note.comments !== undefined && note.comments.length > 0 ) { %>
+
+    <%}%> 
+    <% for (const comment of note.comments) { %>
+        <div class="p-3 my-3 bg-light rounded-lg">
+            <span><%= comment.author %></span><p><%= comment.body %> </p>
+        </div>
+        <button class="btn btn-danger px-3 mr-3" onclick="deleteComment(this)" data-comment-id="<%=comment._id %>">Delete Comment</button>
+    <% } %>
+    <hr>
+    <button class="float-right btn btn-primary px-3" onclick="window.location.href='/notes/<%= note._id %>/comments/create'">Add Comment</button>
+</div>
+
+<script>
+    function deleteNote(button){
+        fetch("/notes/<%= note._id %>/delete",
+        {
+            method: 'DELETE'
+        }).then(res=>res.json(res))
+        .then(json=>window.location.href=json.redirect)
+        .catch(err=>console.log(err))
+    }
+    function deleteComment(button){
+        const endpoint = `/notes/<%= note._id %>/comments/${button.dataset.commentId}/delete`
+        fetch(endpoint,
+        {
+            method: 'DELETE',
+        }).then(res=>res.json(res))
+        .then(json=>window.location.href=json.redirect)
+        .catch(err=>console.log(err))
+    }
+</script>
+<%- include('partials/footer') %> 
