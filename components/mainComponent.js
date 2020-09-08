@@ -1,4 +1,9 @@
-const 
+const { uploader } = require('../cloudinaryConfig.js')
+
+const
+    path = require('path'),
+    DatauriParser = require('datauri/parser'),
+    parser  = new DatauriParser(),
     Note = require('../models/note.js'),
     
 index = async (req,res)  =>{
@@ -18,15 +23,18 @@ create = (req,res) => {
 
 
 store = (req,res) => {
-    const file = req.file
-    const str = file.path
-    const filePath = str.substr(6)
-    Note.create({
-        title: req.body.title,
-        image: filePath,
-        note: req.body.notes
+    const encodedFile = parser.format(path.extname(req.file.originalname).toString(),req.file.buffer)
+    const file = encodedFile.content
+    uploader.upload(file).then((result)=>{
+        const image = result.url;
+        Note.create({
+            title: req.body.title,
+            image: image,
+            notes: req.body.notes
+        })
+        res.redirect('/')
     })
-    res.redirect('/')
+
 }
 
 edit = (req,res) =>{
@@ -37,13 +45,9 @@ edit = (req,res) =>{
 }
 
 update = (req,res) =>{
-    const file = req.file
-    const str = file.path
-    const filePath = str.substr(6)
     Note.findByIdAndUpdate(req.params.id,{
         title: req.body.title,
-        image: filePath,
-        note: req.body.notes
+        notes: req.body.notes
     })
     .then(()=>{res.json({redirect:'/notes/'+req.params.id})})
     .catch(err=>console.log(err))
